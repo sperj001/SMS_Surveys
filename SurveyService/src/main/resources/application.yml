@@ -1,0 +1,70 @@
+logging:
+  level:
+    org:
+      hibernate: INFO
+      springframework:
+        web: DEBUG
+    root: ALL
+    
+cognito:
+  url: ${COGNITO_URL}
+  key: ${COGNITO_KEY}
+    
+spring:
+  profiles:
+    active: ${DEPLOYMENT_STAGE}
+  application:
+    name: survey-service
+
+  datasource:
+    driverClassName: org.postgresql.Driver
+    initialization-mode: NEVER
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_schema: ${DB_SCHEMA}
+    show-sql: false
+    
+---
+spring:
+  profiles: dev    
+
+server:
+  port: 8092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${DISCOVERY_URL:http://localhost:8888}/eureka/
+  instance:
+    lease-renewal-interval-in-seconds: 20
+    lease-expiration-duration-in-seconds: 30
+    
+---
+spring:
+  profiles: prod
+
+server:
+  port: 8092
+  
+eureka:
+  client:
+    enabled: false
+    
+ribbon:
+  eureka: 
+    enabled: false
+    
+user-service:
+  ribbon:
+    listOfServers: ${GATEWAY_URL}
+    
+
